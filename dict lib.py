@@ -1,3 +1,5 @@
+import datetime
+
 library_books = {}
 
 def add_books():
@@ -5,7 +7,7 @@ def add_books():
     if name in library_books:
         print("Book already exists")
     else:
-        library_books.update({name: "Available"})
+        library_books[name] = {"status": "Available", "issued_on": None}
         print("Book added successfully")
 
 def show_books():
@@ -13,14 +15,21 @@ def show_books():
         print("No books available")
     else:
         print("\nLibrary Books:")
-        for book, status in library_books.items():
-            print(f"{book.title()} : {status}")
+        for book, details in library_books.items():
+            status = details["status"]
+            if status == "Issued":
+                issued_on = details["issued_on"]
+                days_issued = (datetime.date.today() - issued_on).days
+                print(f"{book.title()} : {status} (Issued {days_issued} days ago)")
+            else:
+                print(f"{book.title()} : {status}")
 
 def issue_books():
     name = input("Enter the book name: ").strip().lower()
     if name in library_books:
-        if library_books[name] == "Available":
-            library_books.update({name: "Issued"})
+        if library_books[name]["status"] == "Available":
+            library_books[name]["status"] = "Issued"
+            library_books[name]["issued_on"] = datetime.date.today()
             print("Book issued successfully")
         else:
             print("Book is already issued")
@@ -30,9 +39,19 @@ def issue_books():
 def return_books():
     name = input("Enter the book name: ").strip().lower()
     if name in library_books:
-        if library_books[name] == "Issued":
-            library_books.update({name: "Available"})
-            print("Book returned successfully")
+        if library_books[name]["status"] == "Issued":
+            issued_on = library_books[name]["issued_on"]
+            days_issued = (datetime.date.today() - issued_on).days
+            allowed_days = 7
+            fine_per_day = 50
+            fine = 0
+            if days_issued > allowed_days:
+                fine = (days_issued - allowed_days) * fine_per_day
+            library_books[name]["status"] = "Available"
+            library_books[name]["issued_on"] = None
+            print(f"Book returned successfully. It was issued for {days_issued} days.")
+            if fine > 0:
+                print(f"Fine applicable: ₹{fine}")
         else:
             print("Book was not issued")
     else:
@@ -40,6 +59,7 @@ def return_books():
 
 def library():
     while True:
+        print("\nLibrary Menu ")
         print("1. Add Books")
         print("2. Show Books")
         print("3. Issue Books")
