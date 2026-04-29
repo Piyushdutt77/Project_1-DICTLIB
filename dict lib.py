@@ -45,7 +45,6 @@ def return_books():
     if name in issued_books:
         used = int(input("Enter days used: "))
         allowed = issued_books[name][1]
-
         if used > allowed:
             extra = used - allowed
             fine = calculate_fine(extra)
@@ -53,7 +52,6 @@ def return_books():
             print("Fine:", fine)
         else:
             print("Returned on time")
-
         books[name] = "available"
         issued_books.pop(name)
         print("Book returned")
@@ -67,9 +65,7 @@ def library():
         print("3 Issue book")
         print("4 Return book")
         print("5 Exit")
-
         choice = input("Enter choice: ")
-
         if choice == "1":
             add_books()
         elif choice == "2":
@@ -83,6 +79,4 @@ def library():
             break
         else:
             print("Wrong choice")
-
-library()  
-is this pk??
+library()
